@@ -1,4 +1,10 @@
-public class GumballMachine {
+import java.rmi.*;
+import java.rmi.server.*;
+
+public class GumballMachine extends UnicastRemoteObject implements GumballMachineRemote {
+    private static final long serialVersionUID = 2L;
+    String location;
+
     State soldOutState;
     State noQuarterState;
     State hasQuarterState;
@@ -9,7 +15,9 @@ public class GumballMachine {
     int count = 0;
 
 
-    public GumballMachine(int numberOfGumballs) {
+    public GumballMachine(String location, int numberOfGumballs) throws RemoteException {
+        this.location = location;
+
         soldOutState = new SoldOutState(this);
         noQuarterState = new NoQuarterState(this);
         hasQuarterState = new HasQuarterState(this);
@@ -55,40 +63,49 @@ public class GumballMachine {
         state.dispense();
     }
 
-    void setState(State state) {
+    public void setState(State state) {
         this.state = state;
     }
 
-    void releaseBall() {
+    public void releaseBall() {
         System.out.println("A gumball comes rolling out the slot...");
         if (count > 0) {
             count -= 1;
         }
     }
 
-    State getHasQuarterState() {
+    public State getHasQuarterState() {
         return hasQuarterState;
     }
-    State getNoQuarterState() {
+    public State getNoQuarterState() {
         return noQuarterState;
     }
-    State getSoldOutState() {
+    public State getSoldOutState() {
         return soldOutState;
     }
-    State getSoldState() {
+    public State getSoldState() {
         return soldState;
     }
-    State getWinnerState() {
+    public State getWinnerState() {
         return winnerState;
     }
-    int getCount() {
+    public int getCount() {
         return count;
     }
 
-    void refill(int count) {
+    public void refill(int count) {
         this.count += count;
         System.out.println("The gumball machine was just refilled; its new count is: " + this.count);
         state.refill();
+    }
+
+    //proxy
+    public String getLocation() {
+        return location;
+    }
+
+    public State getState() {
+        return state;
     }
 
 
